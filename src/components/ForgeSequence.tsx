@@ -189,7 +189,7 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
       </motion.div>
       {/* eslint-enable @next/next/no-img-element */}
 
-      {/* First-screen copy: what this is, and the one thing to do */}
+      {/* First-screen copy: what this is */}
       <motion.div
         style={{ opacity: introOpacity, y: introY }}
         className="absolute z-10 portrait:inset-x-0 portrait:bottom-[7vh] portrait:px-6 portrait:text-center landscape:top-1/2 landscape:left-[max(24px,5vw)] landscape:max-w-[19rem] landscape:-translate-y-1/2"
@@ -197,17 +197,6 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
         <p className="text-lg leading-snug text-text lg:text-xl">
           A card game of living legends, bound to cards on the first anvil.
         </p>
-        <div className="mt-6 flex items-center gap-5 portrait:justify-center">
-          <a
-            href="#gods"
-            className="rounded-full bg-gold px-6 py-3 font-heading text-base font-bold text-ink transition-[background-color,transform] duration-150 hover:bg-gold-pale active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-pale"
-          >
-            Meet the three gods
-          </a>
-          <a href="#bind" className="text-base text-mint underline-offset-4 transition-colors hover:text-mint-glow hover:underline">
-            Forge your card
-          </a>
-        </div>
       </motion.div>
 
       <motion.div
