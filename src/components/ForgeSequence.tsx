@@ -7,7 +7,6 @@ import {
   easeOut,
   motion,
   useMotionValue,
-  useReducedMotion,
   useScroll,
   useTransform,
   type MotionValue,
@@ -19,6 +18,7 @@ import { GoldSheet } from "./GoldSheet";
 import { ScrollSplitCard } from "./ui/scroll-split-card";
 import { CardBack } from "./CardBack";
 import { CardModal } from "./CardModal";
+import { DownloadWidget } from "./DownloadModal";
 
 /**
  * One tall scroll region, one sticky stage:
@@ -29,7 +29,7 @@ const HANDOFF = 0.38;
 
 const layer = "pointer-events-none absolute inset-0 h-full w-full object-cover select-none";
 
-export function ForgeSequence() {
+export function ForgeSequence({ onDownload }: { onDownload: () => void }) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const desktop = useMediaQuery("(min-width: 768px)", true);
@@ -48,14 +48,14 @@ export function ForgeSequence() {
 
       <div className="sticky top-0 h-[100dvh] overflow-hidden">
         <motion.div className="absolute inset-0" style={{ display: heroDisplay }}>
-          <Hero p={p} orientation={orientation} />
+          <Hero p={p} orientation={orientation} onDownload={onDownload} />
         </motion.div>
 
         <motion.div className="absolute inset-0" style={{ display: splitDisplay }}>
           <ScrollSplitCard
             progress={split}
             orientation={orientation}
-            front={(i) => <GoldSheet textReveal={1} seams={1} orientation={orientation} decorative={i !== 1} />}
+            front={() => <GoldSheet seams={1} orientation={orientation} />}
             cards={CARDS.map((c) => ({ title: c.name, description: c.lore, bgColor: "#141718", textColor: "#ece6da" }))}
             renderBack={(i) => <CardBack card={CARDS[i]} compact={!desktop} />}
             onSelect={setOpen}
@@ -69,7 +69,7 @@ export function ForgeSequence() {
   );
 }
 
-function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertical" | "horizontal" }) {
+function Hero({ p, orientation, onDownload }: { p: MotionValue<number>; orientation: "vertical" | "horizontal"; onDownload: () => void }) {
   // Title & crystal
   const titleY = useTransform(p, [0, 0.12], ["0vh", "-30vh"]);
   const titleOpacity = useTransform(p, [0, 0.1], [1, 0]);
@@ -120,12 +120,9 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
   const goldScale = useTransform(p, [0.12, 0.31], [1, 1.12]);
   const leftX = useTransform(p, [0.12, 0.3], ["0vw", "7vw"]);
   const rightX = useTransform(p, [0.12, 0.3], ["0vw", "-7vw"]);
-  const reduce = useReducedMotion();
-  const textRevealScroll = useTransform(p, [0.29, 0.33], [0, 1]);
-  const textReveal = reduce ? 1 : textRevealScroll;
   const seams = useTransform(p, [0.33, HANDOFF], [0, 1], { ease: easeOut });
 
-  // Scroll cue + first-screen copy
+  // Scroll cue + first-screen download widget
   const cueOpacity = useTransform(p, [0, 0.03], [1, 0]);
   const introOpacity = useTransform(p, [0, 0.05], [1, 0]);
   const introY = useTransform(p, [0, 0.05], [0, -24]);
@@ -217,18 +214,16 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
           className="pointer-events-none absolute inset-x-0 -top-[22vh] h-[30vh] w-full object-cover select-none [mask-image:linear-gradient(transparent,#000_40%,#000_75%,transparent)]"
           style={{ mixBlendMode: "screen", opacity: heatOpacity }}
         />
-        <GoldSheet textReveal={textReveal} seams={seams} orientation={orientation} />
+        <GoldSheet seams={seams} orientation={orientation} />
       </motion.div>
       {/* eslint-enable @next/next/no-img-element */}
 
-      {/* First-screen copy: what this is */}
+      {/* First-screen download widget (store-widget style) */}
       <motion.div
         style={{ opacity: introOpacity, y: introY }}
-        className="absolute z-10 portrait:inset-x-0 portrait:bottom-[7vh] portrait:px-6 portrait:text-center landscape:top-1/2 landscape:left-[max(24px,5vw)] landscape:max-w-[19rem] landscape:-translate-y-1/2"
+        className="absolute z-10 portrait:inset-x-0 portrait:bottom-[5vh] portrait:flex portrait:justify-center portrait:px-4 landscape:top-1/2 landscape:left-[max(24px,4vw)] landscape:-translate-y-1/2"
       >
-        <p className="text-lg leading-snug text-text lg:text-xl">
-          A card game of living legends, bound to cards on the first anvil.
-        </p>
+        <DownloadWidget onDownload={onDownload} />
       </motion.div>
 
       <motion.div

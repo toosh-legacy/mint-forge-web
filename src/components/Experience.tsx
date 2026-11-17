@@ -16,10 +16,10 @@ export function Experience() {
   const closeDownload = useCallback(() => setDownload(false), []);
   return (
     <SmoothScroll>
-      <Loader onDone={() => setReady(true)} onDownload={() => setDownload(true)} hold={download} />
+      <Loader onDone={() => setReady(true)} />
       <Nav show={ready} onDownload={() => setDownload(true)} />
       <main>
-        <ForgeSequence />
+        <ForgeSequence onDownload={() => setDownload(true)} />
         <BindCard />
         <Merch />
       </main>

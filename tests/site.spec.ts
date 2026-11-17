@@ -47,7 +47,7 @@ test.describe("Loader", () => {
     expect(await page.evaluate(() => scrollY)).toBe(0);
 
     await waitForLoader(page);
-    await expect(page.locator("header nav")).toBeVisible();
+    await expect(page.locator("header nav")).toHaveCount(0); // dock waits until the title is gone
     await expect(page.getByRole("heading", { level: 1 }).getByAltText("MintForge Eternal")).toBeVisible();
     expect(errors).toEqual([]);
   });
@@ -60,25 +60,25 @@ test.describe("Loader", () => {
 });
 
 test.describe("Game download", () => {
-  test("loader button opens the store picker and holds the intro", async ({ page }) => {
+  test("hero widget opens the store picker", async ({ page }) => {
     await page.goto("/");
-    await page.locator(LOADER).getByRole("button", { name: "Download the game" }).click();
+    await expect(page.locator(LOADER).getByRole("button", { name: /download/i })).toHaveCount(0);
+    await waitForLoader(page);
+    await page.getByRole("button", { name: "Download now" }).click();
     const dialog = page.getByRole("dialog", { name: "MintForge Eternal" });
     await expect(dialog).toBeVisible();
     for (const store of ["Steam", "itch.io", "Epic Games Store"]) {
       await expect(dialog.getByRole("link", { name: new RegExp(store) })).toHaveAttribute("target", "_blank");
     }
-    await page.waitForTimeout(5000); // well past the paint timeline
-    await expect(page.locator(LOADER)).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
-    await waitForLoader(page);
   });
 
-  test("nav Download opens the store picker", async ({ page }) => {
+  test("dock Download opens the store picker", async ({ page }) => {
     await page.goto("/");
     await waitForLoader(page);
-    await page.locator("header").getByRole("button", { name: "Download" }).click();
+    await scrollForge(page, 0.2);
+    await page.locator("header nav").getByRole("button", { name: "Download the game" }).click();
     await expect(page.getByRole("dialog", { name: "MintForge Eternal" })).toBeVisible();
   });
 });
@@ -100,7 +100,8 @@ test.describe("Forge scroll sequence", () => {
     expect(await opacityOf(page, 'h1 img[alt="MintForge Eternal"]')).toBeLessThan(0.05); // title gone
 
     await scrollForge(page, 0.34);
-    await expect(page.getByRole("heading", { name: "The First Forged" }).first()).toBeVisible();
+    await expect(page.locator(".gold-sheet").first()).toBeInViewport();
+    await expect(page.getByText("The First Forged")).toHaveCount(0);
   });
 
   test("panels split and flip to reveal all three gods", async ({ page }) => {
@@ -130,10 +131,25 @@ test.describe("Forge scroll sequence", () => {
     await expect(dialog).toBeHidden();
   });
 
-  test("nav links jump to their sections", async ({ page, isMobile }) => {
-    test.skip(isMobile, "Section links are collapsed into the Shop button on mobile");
-    await page.getByRole("link", { name: "Merch" }).click();
+  test("dock hides over the title, then every link lands on its section", async ({ page }) => {
+    const dock = page.locator("header nav");
+    await expect(dock).toHaveCount(0);
+    await scrollForge(page, 0.15);
+    await expect(dock).toBeVisible();
+
+    await dock.getByRole("link", { name: "Merch" }).click();
     await expect(page.getByRole("heading", { name: "Merch" })).toBeInViewport();
+    await dock.getByRole("link", { name: "Forge a card" }).click();
+    await expect(page.locator("#bind").getByLabel("Name to bind")).toBeInViewport();
+    await dock.getByRole("link", { name: "Join the list" }).click();
+    await expect(page.getByLabel("Notify me when the store opens")).toBeInViewport();
+    await dock.getByRole("link", { name: "Contact" }).click();
+    await expect(page.locator("footer#contact")).toBeInViewport();
+    await dock.getByRole("link", { name: "The Gods" }).click();
+    await expect(page.getByText("The gods of the forge")).toBeInViewport();
+    await dock.getByRole("link", { name: "Home" }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toBeInViewport();
+    await expect(dock).toHaveCount(0);
   });
 });
 
@@ -194,13 +210,6 @@ test.describe("Merch & contact", () => {
     await expect(page.getByText("You're on the list.")).toBeVisible();
   });
 
-  test("Join the list jumps to the notify form", async ({ page, isMobile }) => {
-    test.skip(isMobile, "nav links collapse on phones");
-    await page.evaluate(() => scrollTo(0, 0));
-    await page.getByRole("link", { name: "Join the list" }).click();
-    await expect(page.getByLabel("Notify me when the store opens")).toBeInViewport();
-  });
-
   test("footer shows developer contact links", async ({ page }) => {
     const footer = page.locator("footer#contact");
     await footer.scrollIntoViewIfNeeded();
@@ -231,12 +240,14 @@ test.describe("Layout & accessibility", () => {
     expect(box.x + box.width).toBeLessThanOrEqual(vw);
   });
 
-  test("title clears the nav and the crystal", async ({ page }) => {
+  test("title sits fully on screen, above the crystal", async ({ page }) => {
     await page.goto("/");
     await waitForLoader(page);
     const title = (await page.locator("h1.title-stage").boundingBox())!;
-    const nav = (await page.locator("header nav").boundingBox())!;
-    expect(title.y).toBeGreaterThanOrEqual(nav.y + nav.height);
+    const vw = page.viewportSize()!.width;
+    expect(title.y).toBeGreaterThanOrEqual(0);
+    expect(title.x).toBeGreaterThanOrEqual(0);
+    expect(title.x + title.width).toBeLessThanOrEqual(vw);
   });
 
   test("reduced motion: intro is quick and content still reachable", async ({ browser }) => {

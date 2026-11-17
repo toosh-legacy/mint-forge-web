@@ -121,18 +121,42 @@ export function DownloadModal({ open, onClose, restoreScroll }: { open: boolean;
   );
 }
 
-/** The download trigger: a gold pill with a down-arrow that tucks under the cursor on hover. */
-export function DownloadButton({ onClick, className = "" }: { onClick: () => void; className?: string }) {
+/** First-screen store widget: key art, title, platforms, and a "Download now" that opens the store picker. */
+export function DownloadWidget({ onDownload }: { onDownload: () => void }) {
+  const steam = STORES.find((s) => s.name === "Steam");
   return (
-    <button
-      onClick={onClick}
-      aria-haspopup="dialog"
-      className={`group flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 font-heading text-sm font-bold text-ink shadow-[0_10px_30px_-10px_rgba(233,180,76,0.7)] transition-[background-color,transform] duration-150 hover:bg-gold-pale active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-pale ${className}`}
-    >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden className="transition-transform duration-200 group-hover:translate-y-0.5">
-        <path d="M12 4v12M6 11l6 6 6-6M5 20h14" />
-      </svg>
-      Download the game
-    </button>
+    <div className="glass glass-refract w-[min(19rem,100%)] overflow-hidden rounded-2xl">
+      <div className="relative aspect-[16/7] overflow-hidden portrait:hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/hero/keyart.webp" alt="" className="absolute inset-0 size-full object-cover object-[50%_35%]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
+      </div>
+      <div className="p-4">
+        <p className="font-display text-gold-foil text-xl leading-tight font-black">{GAME.name}</p>
+        <p className="mt-1 text-[13px] text-text-dim">Card battler · Windows · macOS · Steam Deck</p>
+        <div className="mt-4 flex items-center gap-2">
+          <button
+            onClick={onDownload}
+            aria-haspopup="dialog"
+            className="group font-heading flex flex-1 items-center justify-center gap-2 rounded-xl bg-gold px-4 py-2.5 text-sm font-bold text-ink shadow-[0_10px_30px_-10px_rgba(233,180,76,0.7)] transition-[background-color,transform] duration-150 hover:bg-gold-pale active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-pale"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden className="transition-transform duration-200 group-hover:translate-y-0.5">
+              <path d="M12 4v12M6 11l6 6 6-6M5 20h14" />
+            </svg>
+            Download now
+          </button>
+          {steam?.href && (
+            <a
+              href={steam.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl bg-white/[0.07] px-3 py-2.5 text-sm text-text/90 transition-colors hover:bg-white/[0.13] hover:text-white focus-visible:outline-2 focus-visible:outline-mint"
+            >
+              Steam ↗
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

@@ -205,15 +205,15 @@ body {
 /* ── Title lockup placement (hero + loader share it so the hand-off is seamless) ──
    The art stage is cover-cropped, so the crystal's top edge sits at
    50% - 0.142 × frameHeight, where frameHeight = max(100%, 56.25vw).
-   The title fills the band between the nav and that edge — never under the nav,
+   The title fills the band between the top edge and that edge — never cropped,
    never over the crystal — on any landscape aspect ratio. */
 .title-stage {
   position: absolute;
   left: 50%;
   translate: -50% 0;
   aspect-ratio: 2000 / 546;
-  top: max(84px, 8%);
-  height: min(24%, calc(50% - 0.142 * max(100%, 56.25vw) - max(84px, 8%) - 24px), 22.9vw);
+  top: max(32px, 5%);
+  height: min(24%, calc(50% - 0.142 * max(100%, 56.25vw) - max(32px, 5%) - 24px), 22.9vw);
 }
 
 /* Portrait: the art is a 16:9 band centred at 54% (see ART_STAGE); sit the title just above the crystal. */
