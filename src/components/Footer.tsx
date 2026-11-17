@@ -93,15 +93,15 @@ export function Footer() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-5%" }}
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-        className="relative mx-auto mt-20 max-w-[1600px] overflow-hidden md:mt-28"
-        style={{ aspectRatio: "1500 / 215" }}
+        className="relative mx-auto mt-20 max-w-[1200px] md:mt-28"
+        style={{ aspectRatio: "2000 / 546" }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/hero/title.webp"
-          alt="MintForge"
-          className="absolute max-w-none select-none"
-          style={{ width: "133.333%", left: "-18%", top: "-53.5%", filter: "drop-shadow(0 8px 14px rgba(0,0,0,0.5))" }}
+          alt="MintForge Eternal"
+          className="absolute inset-0 h-full w-full select-none object-contain"
+          style={{ filter: "drop-shadow(0 8px 14px rgba(0,0,0,0.5))" }}
         />
       </motion.div>
       <div className="relative mx-auto mt-8 flex max-w-[1600px] flex-col items-center justify-between gap-2 text-sm text-text-dim sm:flex-row">

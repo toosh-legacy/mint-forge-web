@@ -177,13 +177,10 @@ function ForgedCard({ card, strikes }: { card: Forged; strikes: number }) {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/hero/crystal.webp"
+              src="/hero/gem.webp"
               alt=""
-              className="absolute max-w-none"
+              className="absolute top-1/2 left-1/2 h-[96%] max-w-none -translate-x-1/2 -translate-y-1/2"
               style={{
-                width: "484%",
-                left: "-197%",
-                top: "-85%",
                 filter: `hue-rotate(${card.hue}deg) saturate(1.2) drop-shadow(0 0 3cqw ${card.patron.accent})`,
                 transition: "filter 500ms ease",
               }}

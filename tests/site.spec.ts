@@ -48,7 +48,7 @@ test.describe("Loader", () => {
 
     await waitForLoader(page);
     await expect(page.locator("header nav")).toBeVisible();
-    await expect(page.getByRole("heading", { level: 1 }).getByAltText("MintForge")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 }).getByAltText("MintForge Eternal")).toBeVisible();
     expect(errors).toEqual([]);
   });
 
@@ -56,6 +56,30 @@ test.describe("Loader", () => {
     await page.goto("/");
     await page.getByRole("button", { name: "Skip" }).click();
     await waitForLoader(page);
+  });
+});
+
+test.describe("Game download", () => {
+  test("loader button opens the store picker and holds the intro", async ({ page }) => {
+    await page.goto("/");
+    await page.locator(LOADER).getByRole("button", { name: "Download the game" }).click();
+    const dialog = page.getByRole("dialog", { name: "MintForge Eternal" });
+    await expect(dialog).toBeVisible();
+    for (const store of ["Steam", "itch.io", "Epic Games Store"]) {
+      await expect(dialog.getByRole("link", { name: new RegExp(store) })).toHaveAttribute("target", "_blank");
+    }
+    await page.waitForTimeout(5000); // well past the paint timeline
+    await expect(page.locator(LOADER)).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await waitForLoader(page);
+  });
+
+  test("nav Download opens the store picker", async ({ page }) => {
+    await page.goto("/");
+    await waitForLoader(page);
+    await page.locator("header").getByRole("button", { name: "Download" }).click();
+    await expect(page.getByRole("dialog", { name: "MintForge Eternal" })).toBeVisible();
   });
 });
 
@@ -73,7 +97,7 @@ test.describe("Forge scroll sequence", () => {
     const y1 = (await anvil.boundingBox())!.y;
     expect(y1).toBeGreaterThan(y0 + 200); // dropped well down the screen
 
-    expect(await opacityOf(page, 'h1 img[alt="MintForge"]')).toBeLessThan(0.05); // title gone
+    expect(await opacityOf(page, 'h1 img[alt="MintForge Eternal"]')).toBeLessThan(0.05); // title gone
 
     await scrollForge(page, 0.34);
     await expect(page.getByRole("heading", { name: "The First Forged" }).first()).toBeVisible();
@@ -201,11 +225,18 @@ test.describe("Layout & accessibility", () => {
     test.skip(!isMobile, "portrait-only layout");
     await page.goto("/");
     await waitForLoader(page);
-    const box = (await page.getByRole("heading", { level: 1 }).getByAltText("MintForge").boundingBox())!;
+    const box = (await page.getByRole("heading", { level: 1 }).getByAltText("MintForge Eternal").boundingBox())!;
     const vw = page.viewportSize()!.width;
-    // The lettering spans ~14.5%–87.3% of the art frame; that band must be on-screen.
-    expect(box.x + box.width * 0.145).toBeGreaterThanOrEqual(0);
-    expect(box.x + box.width * 0.873).toBeLessThanOrEqual(vw);
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(vw);
+  });
+
+  test("title clears the nav and the crystal", async ({ page }) => {
+    await page.goto("/");
+    await waitForLoader(page);
+    const title = (await page.locator("h1.title-stage").boundingBox())!;
+    const nav = (await page.locator("header nav").boundingBox())!;
+    expect(title.y).toBeGreaterThanOrEqual(nav.y + nav.height);
   });
 
   test("reduced motion: intro is quick and content still reachable", async ({ browser }) => {

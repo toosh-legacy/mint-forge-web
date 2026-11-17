@@ -56,7 +56,7 @@ export const MERCH: MerchItem[] = [
   { name: "Goldrax Foil Print", kind: "Holo art print · A3", image: "/cards/goldrax-800.webp", fit: "card", tint: "#ff5a2a" },
   { name: "Polyphius Foil Print", kind: "Holo art print · A3", image: "/cards/polyphius-800.webp", fit: "card", tint: "#3fe6d4" },
   { name: "Quasar Foil Print", kind: "Holo art print · A3", image: "/cards/quasar-800.webp", fit: "card", tint: "#8b5cf6" },
-  { name: "Sacred Anvil Tee", kind: "Heavyweight cotton", image: "/hero/anvil.webp", fit: "art", tint: "#ff7a2f", focus: { x: 50, y: 66, zoom: 1.45 } },
-  { name: "Mint Crystal Pendant", kind: "Resin & brass", image: "/hero/crystal.webp", fit: "art", tint: "#3fe6d4", focus: { x: 51, y: 43, zoom: 4.2 } },
-  { name: "Key Art Desk Mat", kind: "900 × 400 mm", image: "/hero/full.webp", fit: "art", tint: "#e9b44c", focus: { x: 50, y: 50, zoom: 1 } },
+  { name: "Sacred Anvil Tee", kind: "Heavyweight cotton", image: "/hero/anvil.webp", fit: "art", tint: "#ff7a2f", focus: { x: 50, y: 72, zoom: 1.6 } },
+  { name: "Mint Crystal Pendant", kind: "Resin & brass", image: "/hero/crystal.webp", fit: "art", tint: "#3fe6d4", focus: { x: 50.8, y: 47.3, zoom: 4.5 } },
+  { name: "Key Art Desk Mat", kind: "900 × 400 mm", image: "/hero/keyart.webp", fit: "art", tint: "#e9b44c", focus: { x: 50, y: 50, zoom: 1 } },
 ];

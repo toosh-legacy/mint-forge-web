@@ -11,10 +11,15 @@ const PRELOAD = [
   "/hero/full.webp",
   "/hero/plate.webp",
   "/hero/title.webp",
+  "/hero/glow.webp",
+  "/hero/flames.webp",
   "/hero/crystal.webp",
   "/hero/anvil.webp",
+  "/hero/nebula.webp",
   "/hero/gold-left.webp",
   "/hero/gold-right.webp",
+  "/hero/fog.webp",
+  "/hero/heat.webp",
   "/cards/goldrax-800.webp",
   "/cards/polyphius-800.webp",
   "/cards/quasar-800.webp",
@@ -173,8 +178,8 @@ export function Loader({ onDone, onDownload, hold = false }: { onDone: () => voi
 
             {/* Crystal awakens as the colour lands */}
             <motion.circle
-              cx="980"
-              cy="462"
+              cx="976"
+              cy="511"
               r="190"
               fill="url(#crystal-glow)"
               style={{ mixBlendMode: "screen" }}
@@ -183,6 +188,28 @@ export function Loader({ onDone, onDownload, hold = false }: { onDone: () => voi
               transition={{ delay: reduce ? 0 : PAINT_END - 0.5, duration: 1.1, ease: "easeOut" }}
             />
           </motion.svg>
+          </div>
+
+          {/* Title: inked on the parchment first, then the forged colour floods in with the paint. */}
+          <div className="title-stage" aria-hidden>
+            <motion.img
+              src="/hero/title.webp"
+              alt=""
+              className="absolute inset-0 h-full w-full object-contain"
+              style={{ filter: "grayscale(1) brightness(0.18) contrast(1.4)" }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 0.85, y: 0 }}
+              transition={{ duration: reduce ? 0.2 : INK_IN + 0.2, ease: "easeOut" }}
+            />
+            <motion.img
+              src="/hero/title.webp"
+              alt=""
+              className="absolute inset-0 h-full w-full object-contain"
+              style={{ filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.55))" }}
+              initial={{ opacity: 0, clipPath: "inset(0 100% 0 0)" }}
+              animate={{ opacity: 1, clipPath: "inset(0 0% 0 0)" }}
+              transition={reduce ? { duration: 0 } : { delay: STROKE_START + 0.3, duration: 1.4, ease: [0.65, 0, 0.35, 1] }}
+            />
           </div>
 
           <div className="absolute inset-x-0 bottom-6 flex flex-col items-center gap-2 motion-reduce:hidden sm:bottom-10">

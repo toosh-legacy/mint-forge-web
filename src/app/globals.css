@@ -201,3 +201,45 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .ember { animation: none; opacity: 0; }
 }
+
+/* ── Title lockup placement (hero + loader share it so the hand-off is seamless) ──
+   The art stage is cover-cropped, so the crystal's top edge sits at
+   50% - 0.142 × frameHeight, where frameHeight = max(100%, 56.25vw).
+   The title fills the band between the nav and that edge — never under the nav,
+   never over the crystal — on any landscape aspect ratio. */
+.title-stage {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  aspect-ratio: 2000 / 546;
+  top: max(84px, 8%);
+  height: min(24%, calc(50% - 0.142 * max(100%, 56.25vw) - max(84px, 8%) - 24px), 22.9vw);
+}
+
+/* Portrait: the art is a 16:9 band centred at 54% (see ART_STAGE); sit the title just above the crystal. */
+@media (orientation: portrait) {
+  .title-stage {
+    top: calc(54% - 40.4vw);
+    height: auto;
+    width: 88vw;
+  }
+}
+
+/* ── Hero atmosphere ──────────────────────────────────────────────────── */
+@keyframes fog-drift {
+  0% { transform: translate3d(-2%, 0, 0) scale(1.06); }
+  100% { transform: translate3d(2%, -1%, 0) scale(1.06); }
+}
+
+@keyframes flame-flicker {
+  0%, 100% { transform: scale(1, 1); opacity: 0.92; }
+  35% { transform: scale(1.01, 1.035); opacity: 1; }
+  70% { transform: scale(0.995, 0.985); opacity: 0.88; }
+}
+
+.fog-drift { animation: fog-drift 26s ease-in-out infinite alternate; }
+.flame-flicker { animation: flame-flicker 2.8s ease-in-out infinite; transform-origin: 50% 92%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fog-drift, .flame-flicker { animation: none; }
+}

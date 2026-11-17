@@ -84,6 +84,17 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
   const anvilRotate = useTransform(p, [0.025, 0.16], [0, 6], { ease: easeIn });
   const impact = useTransform(p, [0.13, 0.155, 0.22], [0, 0.85, 0]);
 
+  // Arcane flames: flare as the anvil lands, then gutter out before the hoard lifts.
+  const flameScale = useTransform(p, [0, 0.12, 0.155, 0.22], [1, 1.04, 1.28, 1.1]);
+  const flameOpacity = useTransform(p, [0, 0.13, 0.155, 0.27], [1, 1, 1, 0]);
+  const flameBright = useTransform(p, [0.12, 0.155, 0.22], ["brightness(1)", "brightness(1.6)", "brightness(1)"]);
+  // Ambient teal glow breathes with the crystal; fog billows up on impact.
+  const glowOpacity = useTransform(p, [0, 0.12, 0.27], [0.85, 1, 0]);
+  const fogOpacity = useTransform(p, [0, 0.13, 0.17, 0.3], [0.8, 0.8, 1, 0]);
+  const fogY = useTransform(p, [0.13, 0.3], ["0vh", "-10vh"]);
+  // The cosmic seam under the anvil flashes as it strikes.
+  const nebulaGlow = useTransform(p, [0.13, 0.155, 0.24], ["brightness(1) saturate(1)", "brightness(1.9) saturate(1.4)", "brightness(1) saturate(1)"]);
+
   // The hoard lifts and closes in, pulling a molten sheet up behind it.
   // `dist` = how far the sheet travels: from the bottom of the hoard (in the art stage) to the top of the viewport.
   const stageRef = useRef<HTMLDivElement>(null);
@@ -103,6 +114,8 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
   const goldY = useTransform([rise, dist], ([r, d]: number[]) => -r * d);
   // The sheet floods up from the bottom edge, so nothing gold shows at rest.
   const sheetY = useTransform([rise, vh], ([r, h]: number[]) => (1 - r) * h);
+  // Heat haze only shows while the sheet is climbing.
+  const heatOpacity = useTransform(rise, [0, 0.08, 0.85, 1], [0, 1, 1, 0]);
   const pilesOpacity = useTransform(p, [0.27, 0.31], [1, 0]);
   const goldScale = useTransform(p, [0.12, 0.31], [1, 1.12]);
   const leftX = useTransform(p, [0.12, 0.3], ["0vw", "7vw"]);
@@ -125,22 +138,19 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
       {/* Art stage: full-bleed on landscape; on portrait a wider-than-screen 16:9 band so the whole title stays visible. */}
       <div
         ref={stageRef}
-        className={ART_STAGE}
+        className={`${ART_STAGE} portrait:[mask-image:linear-gradient(#000_86%,transparent)]`}
       >
 
-      <motion.h1 className="absolute inset-0 m-0" style={{ y: titleY, opacity: titleOpacity, scale: titleScale }}>
-        <img
-          src="/hero/title.webp"
-          alt="MintForge"
-          className={layer}
-          style={{ filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.55))" }}
-        />
-      </motion.h1>
+      <motion.img src="/hero/glow.webp" alt="" className={`${layer} portrait:[mask-image:linear-gradient(transparent,#000_30%,#000_85%,transparent)]`} style={{ opacity: glowOpacity }} />
+
+      <motion.div className="absolute inset-0" style={{ scale: flameScale, opacity: flameOpacity, filter: flameBright, transformOrigin: "50% 92%" }}>
+        <img src="/hero/flames.webp" alt="" className={`${layer} flame-flicker`} />
+      </motion.div>
 
       <motion.div className="absolute inset-0" style={{ y: crystalY, opacity: crystalOpacity }}>
         <motion.div
           aria-hidden
-          className="absolute left-1/2 top-[43%] size-[34vmin] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="absolute left-[50.8%] top-[47.3%] size-[34vmin] -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
             opacity: crystalGlow,
             background: "radial-gradient(circle, rgba(127,247,234,0.55) 0%, rgba(63,230,212,0.18) 40%, transparent 70%)",
@@ -150,7 +160,7 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
           src="/hero/crystal.webp"
           alt=""
           className={layer}
-          style={{ scale: crystalScale, transformOrigin: "51% 43%" }}
+          style={{ scale: crystalScale, transformOrigin: "50.8% 47.3%" }}
         />
       </motion.div>
 
@@ -173,17 +183,39 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
       {/* The hoard lifts... */}
       <motion.div className="absolute inset-0" style={{ y: goldY }}>
         <motion.div className="absolute inset-0" style={{ scale: goldScale, opacity: pilesOpacity, transformOrigin: "50% 100%" }}>
+          <motion.img src="/hero/nebula.webp" alt="" className={layer} style={{ filter: nebulaGlow }} />
           <motion.img src="/hero/gold-left.webp" alt="" className={layer} style={{ x: leftX }} />
           <motion.img src="/hero/gold-right.webp" alt="" className={layer} style={{ x: rightX }} />
         </motion.div>
       </motion.div>
+
+      <motion.div className="pointer-events-none absolute inset-0 overflow-hidden portrait:[mask-image:linear-gradient(transparent,#000_30%,#000_85%,transparent)]" style={{ opacity: fogOpacity, y: fogY }}>
+        <img src="/hero/fog.webp" alt="" className={`${layer} fog-drift`} />
+      </motion.div>
       </div>
+
+      {/* Title lockup: its own layer so it always clears the nav and the crystal (see .title-stage). */}
+      <motion.h1 className="title-stage m-0" style={{ y: titleY, opacity: titleOpacity, scale: titleScale }}>
+        <img
+          src="/hero/title.webp"
+          alt="MintForge Eternal"
+          className="pointer-events-none h-full w-full select-none object-contain"
+          style={{ filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.55))" }}
+        />
+      </motion.h1>
 
       {/* ...pulling a viewport-sized molten sheet up behind it */}
       <motion.div className="absolute inset-0" style={{ y: sheetY }}>
         <div
           className="absolute inset-x-0 -top-[8vh] h-[8.5vh]"
           style={{ background: "linear-gradient(180deg, transparent, rgba(233,180,76,0.85) 70%, #e9b44c)" }}
+        />
+        {/* Molten heat haze riding the sheet's leading edge */}
+        <motion.img
+          src="/hero/heat.webp"
+          alt=""
+          className="pointer-events-none absolute inset-x-0 -top-[22vh] h-[30vh] w-full object-cover select-none [mask-image:linear-gradient(transparent,#000_40%,#000_75%,transparent)]"
+          style={{ mixBlendMode: "screen", opacity: heatOpacity }}
         />
         <GoldSheet textReveal={textReveal} seams={seams} orientation={orientation} />
       </motion.div>
