@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useLenis } from "lenis/react";
 import { ART_STAGE } from "@/lib/stage";
+import { DownloadButton } from "./DownloadModal";
 
 // Everything the first screens need; the loader holds until these are decoded.
 const PRELOAD = [
@@ -37,7 +38,7 @@ const STROKE_STAGGER = 0.22;
 const STROKE_DUR = 0.62;
 const PAINT_END = STROKE_START + STROKE_STAGGER * (STROKES.length - 1) + STROKE_DUR; // ≈ 2.9s
 
-export function Loader({ onDone }: { onDone: () => void }) {
+export function Loader({ onDone, onDownload, hold = false }: { onDone: () => void; onDownload: () => void; hold?: boolean }) {
   const reduce = useReducedMotion();
   const lenis = useLenis();
   const [loaded, setLoaded] = useState(0);
@@ -66,7 +67,8 @@ export function Loader({ onDone }: { onDone: () => void }) {
   }, [reduce]);
 
   const ready = loaded >= PRELOAD.length;
-  const gone = ready && (painted || !!reduce);
+  // `hold`: the download popup is open over the intro, so keep the loader up until it closes.
+  const gone = ready && (painted || !!reduce) && !hold;
 
   // Hold scroll while the loader is up.
   useEffect(() => {
@@ -200,6 +202,16 @@ export function Loader({ onDone }: { onDone: () => void }) {
               />
             </div>
           </div>
+
+          {/* Drops in from the top once the ink lands; opens the store picker. */}
+          <motion.div
+            className="absolute inset-x-0 top-5 flex justify-start px-4 sm:top-6 sm:justify-center"
+            initial={reduce ? { opacity: 0 } : { y: -90, opacity: 0 }}
+            animate={reduce ? { opacity: 1 } : { y: 0, opacity: 1 }}
+            transition={reduce ? { duration: 0.2 } : { delay: INK_IN + 0.15, type: "spring", stiffness: 260, damping: 18 }}
+          >
+            <DownloadButton onClick={onDownload} />
+          </motion.div>
 
           <button
             onClick={() => setPainted(true)}

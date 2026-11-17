@@ -10,7 +10,7 @@ const LINKS = [
   { href: "#contact", label: "Contact" },
 ];
 
-export function Nav({ show }: { show: boolean }) {
+export function Nav({ show, onDownload }: { show: boolean; onDownload: () => void }) {
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
 
@@ -40,6 +40,16 @@ export function Nav({ show }: { show: boolean }) {
             {l.label}
           </a>
         ))}
+        <button
+          onClick={onDownload}
+          aria-haspopup="dialog"
+          className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-mint transition-[color,background-color,transform] duration-150 hover:bg-mint/10 hover:text-mint-glow active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-mint"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
+            <path d="M12 4v12M6 11l6 6 6-6M5 20h14" />
+          </svg>
+          Download
+        </button>
         <a
           href="#join"
           className="px-4 py-2 text-sm rounded-full bg-gold font-heading font-bold text-ink transition-[background-color,transform] duration-150 hover:bg-gold-pale active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-pale"

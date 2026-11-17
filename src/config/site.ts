@@ -13,6 +13,34 @@ export const DEVELOPER = {
   ],
 } as const;
 
+export const GAME = {
+  name: "MintForge Eternal",
+  tagline: "Choose your storefront. Your cards follow you everywhere.",
+} as const;
+
+export type StoreLink = {
+  name: string;
+  platforms: string;
+  /** ✏️ Replace with the game's own store page. Leave empty ("") to show the store as "Coming soon". */
+  href: string;
+  /** Badge colour behind the store's monogram. */
+  tint: string;
+  mark: string;
+};
+
+// ✏️ Swap each href for MintForge Eternal's real store page once it's live.
+export const STORES: StoreLink[] = [
+  { name: "Steam", platforms: "Windows · macOS · Steam Deck", href: "https://store.steampowered.com/", tint: "#1b2838", mark: "St" },
+  { name: "itch.io", platforms: "Windows · macOS · Linux · DRM-free", href: "https://itch.io/", tint: "#fa5c5c", mark: "it" },
+  { name: "Epic Games Store", platforms: "Windows", href: "https://store.epicgames.com/", tint: "#2a2a2a", mark: "Ep" },
+  { name: "GOG", platforms: "Windows · macOS · DRM-free", href: "https://www.gog.com/", tint: "#86328a", mark: "GOG" },
+  { name: "Microsoft Store", platforms: "Xbox Series X|S · Windows", href: "https://www.xbox.com/games/store", tint: "#107c10", mark: "Xb" },
+  { name: "PlayStation Store", platforms: "PS5", href: "", tint: "#0070d1", mark: "PS" },
+  { name: "Nintendo eShop", platforms: "Nintendo Switch 2", href: "", tint: "#e60012", mark: "Ns" },
+  { name: "App Store", platforms: "iPhone · iPad", href: "https://apps.apple.com/", tint: "#0d84ff", mark: "iOS" },
+  { name: "Google Play", platforms: "Android", href: "https://play.google.com/store/games", tint: "#01875f", mark: "GP" },
+];
+
 export type MerchItem = {
   name: string;
   kind: string;
