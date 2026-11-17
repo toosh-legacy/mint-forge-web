@@ -1,0 +1,68 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=block" rel="stylesheet">
+<style>
+html,body{margin:0;background:transparent}
+#art{position:relative;width:2900px;height:900px}
+#art img{position:absolute;left:0;top:0;width:2897px;height:544px}
+svg{position:absolute;left:0;top:0}
+</style></head><body>
+<div id="art">
+<img src="../assests/ANVIL%201.png">
+<svg width="2900" height="900" viewBox="0 0 2900 900">
+<defs>
+  <!-- Bright cyan core fading to deep teal at the stroke edges, bevel-lit from the top-left -->
+  <filter id="metal" x="-10%" y="-30%" width="120%" height="160%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="9" result="soft"/>
+    <!-- core ramp: alpha of the softened glyph → colour -->
+    <feComponentTransfer in="soft" result="ramp">
+      <feFuncA type="table" tableValues="0 0.15 0.55 0.9 1 1"/>
+    </feComponentTransfer>
+    <feFlood flood-color="#0a5f5c" result="edge"/>
+    <feFlood flood-color="#19f2e3" result="core"/>
+    <feComposite in="core" in2="ramp" operator="in" result="coreA"/>
+    <feComposite in="edge" in2="SourceAlpha" operator="in" result="edgeA"/>
+    <feMerge result="fill"><feMergeNode in="edgeA"/><feMergeNode in="coreA"/></feMerge>
+    <!-- bevel -->
+    <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="bump"/>
+    <feSpecularLighting in="bump" surfaceScale="9" specularConstant="1" specularExponent="22" lighting-color="#d8fffb" result="spec">
+      <feDistantLight azimuth="235" elevation="48"/>
+    </feSpecularLighting>
+    <feComposite in="spec" in2="SourceAlpha" operator="in" result="specA"/>
+    <feDiffuseLighting in="bump" surfaceScale="5" diffuseConstant="1" lighting-color="#ffffff" result="diff">
+      <feDistantLight azimuth="235" elevation="55"/>
+    </feDiffuseLighting>
+    <feComposite in="fill" in2="diff" operator="arithmetic" k1="1.15" k2="0" k3="0" k4="0" result="lit"/>
+    <feComposite in="lit" in2="SourceAlpha" operator="in" result="litA"/>
+    <feComposite in="specA" in2="litA" operator="arithmetic" k1="0" k2="0.55" k3="1" k4="0" result="face"/>
+    <!-- slate hairline outline -->
+    <feMorphology in="SourceAlpha" operator="dilate" radius="4" result="fat"/>
+    <feFlood flood-color="#566584"/>
+    <feComposite in2="fat" operator="in" result="outline"/>
+    <!-- drop shadow + faint cyan aura -->
+    <feGaussianBlur in="fat" stdDeviation="14" result="sh"/>
+    <feOffset in="sh" dx="0" dy="14" result="sho"/>
+    <feFlood flood-color="#000" flood-opacity="0.6"/>
+    <feComposite in2="sho" operator="in" result="shadow"/>
+    <feGaussianBlur in="fat" stdDeviation="22" result="aura0"/>
+    <feFlood flood-color="#3fe6d4" flood-opacity="0.35"/>
+    <feComposite in2="aura0" operator="in" result="aura"/>
+    <feMerge><feMergeNode in="shadow"/><feMergeNode in="aura"/><feMergeNode in="outline"/><feMergeNode in="face"/></feMerge>
+  </filter>
+</defs>
+<g filter="url(#metal)" fill="#fff">
+  <text id="word" x="1448" y="700" text-anchor="middle" font-family="Cinzel" font-weight="900" font-size="190" letter-spacing="58">ETERNAL</text>
+  <g id="orn"></g>
+</g>
+</svg>
+</div><script>
+document.fonts.ready.then(()=>{
+  const b=document.getElementById("word").getBBox(), cy=631, gap=46, ns="http://www.w3.org/2000/svg";
+  const g=document.getElementById("orn");
+  const add=(tag,attrs)=>{const e=document.createElementNS(ns,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);g.appendChild(e);};
+  const dia=(cx,r)=>add("path",{d:`M ${cx-r} ${cy} L ${cx} ${cy-r} L ${cx+r} ${cy} L ${cx} ${cy+r} Z`});
+  const L=b.x-gap, R=b.x+b.width-58+gap; // letter-spacing adds trailing space
+  dia(L-26,24); add("rect",{x:L-26-24-300,y:cy-5,width:300,height:10,rx:5}); dia(L-26-24-300-20,16);
+  dia(R+26,24); add("rect",{x:R+26+24,y:cy-5,width:300,height:10,rx:5}); dia(R+26+24+300+20,16);
+  document.body.dataset.ready=1;
+});
+</script></body></html>
