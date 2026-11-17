@@ -178,7 +178,7 @@ export function Loader({ onDone, onDownload, hold = false }: { onDone: () => voi
 
             {/* Crystal awakens as the colour lands */}
             <motion.circle
-              cx="976"
+              cx="960"
               cy="511"
               r="190"
               fill="url(#crystal-glow)"

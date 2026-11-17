@@ -150,7 +150,7 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
       <motion.div className="absolute inset-0" style={{ y: crystalY, opacity: crystalOpacity }}>
         <motion.div
           aria-hidden
-          className="absolute left-[50.8%] top-[47.3%] size-[34vmin] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="absolute left-1/2 top-[47.3%] size-[34vmin] -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
             opacity: crystalGlow,
             background: "radial-gradient(circle, rgba(127,247,234,0.55) 0%, rgba(63,230,212,0.18) 40%, transparent 70%)",
@@ -160,7 +160,7 @@ function Hero({ p, orientation }: { p: MotionValue<number>; orientation: "vertic
           src="/hero/crystal.webp"
           alt=""
           className={layer}
-          style={{ scale: crystalScale, transformOrigin: "50.8% 47.3%" }}
+          style={{ scale: crystalScale, transformOrigin: "50% 47.3%" }}
         />
       </motion.div>
 

@@ -37,7 +37,8 @@ const LAYERS = {
   glow: { file: "02- Teal Ambient Glow 1.png", full: true },
   fog: { file: "Atmospheric Fog 1.png", full: true },
   flames: { file: "MintForge_Original_Arcane_Flames_4x_300PPI 1.png", ...g(339, 357, 1229) },
-  crystal: { file: "Diamond 1.png", ...g(835, 245, 287) },
+  // x chosen so the gem (opaque centre at 49.9% of its canvas) sits dead-centre over the anvil.
+  crystal: { file: "Diamond 1.png", ...g(817, 245, 287) },
   anvil: { file: "ANVIL-1 1.png", ...g(398, 490, 1125) },
   nebula: { file: "Cosmic Nebula Foundation Connector 1.png", x: 580, y: 905, w: 760 },
   "gold-left": { file: "Dwarven Cosmic Treasure Hoard 1.png", x: -14, y: 800, w: 900 },
